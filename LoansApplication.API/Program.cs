@@ -1,25 +1,29 @@
+using LoansApplication.API.Extensions;
+using LoansApplication.API.Extensions.IoC;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.AddControllerCustom();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// Config swagger
+builder.AddSwagger();
+
+builder
+    .AddDbContext()
+    .AddDbInitializer()
+    .AddRegisterServices()
+    .AddRegisterRepositories();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwaggerCustom();
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
+app.UseDbInitializer();
 
 app.Run();
